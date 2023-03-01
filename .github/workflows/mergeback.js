@@ -10,7 +10,7 @@ module.exports = async ({ github, context }) => {
   });
 
   const branchNameActionTrigger = context.ref.replace("refs/heads/", "");
-  const mergedBranch = payload.head.ref;
+  const mergedBranch = context.payload.head.ref;
   const releaseBranches = protectedBranches.data
     .map(({ name }) => name)
     .filter((name) => name.startsWith("release"))
