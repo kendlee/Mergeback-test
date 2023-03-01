@@ -2,23 +2,23 @@ module.exports = async ({ github, context }) => {
   console.log(JSON.stringify(context, null, 2));
   console.log("PR ref", context.payload.pull_request?.head?.ref ?? "none");
 
-  const branches = await github.rest.repos.listBranches({
+  const protectedBranches = await github.rest.repos.listBranches({
     owner: context.repo.owner,
     repo: context.repo.repo,
     protected: true,
     per_page: 100,
   });
 
-  const branchesNames = branches.data
-    .map(({ name }) => name)
-    .filter((name) => name.startsWith("release"));
-  // .sort(sortBranchName);
-
   const branchNameActionTrigger = context.ref.replace("refs/heads/", "");
+  const mergedBranch = payload.head.ref;
+  const releaseBranches = protectedBranches.data
+    .map(({ name }) => name)
+    .filter((name) => name.startsWith("release"))
+    .sort(sortBranchName);
 
-  console.log(branches);
-  console.log(branchNameActionTrigger);
-  console.log(branchesNames.map(getNormalizedSemverVersion));
+  console.log(protectedBranches);
+  console.log(mergedBranch, ">", branchNameActionTrigger);
+  console.log(releaseBranches.map(getNormalizedSemverVersion));
 };
 
 function getNormalizedSemverVersion(string) {
