@@ -18,7 +18,7 @@ module.exports = async ({ github, context }) => {
 
   console.log(branches);
   console.log(branchNameActionTrigger);
-  console.log(branches.map(getNormalizedSemverVersion));
+  console.log(branchesNames.map(getNormalizedSemverVersion));
 };
 
 function getNormalizedSemverVersion(string) {
