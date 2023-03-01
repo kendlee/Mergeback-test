@@ -32,5 +32,5 @@ function sortBranchName(branchName1, branchName2) {
   const version1 = getNormalizedSemverVersion(branchName1);
   const version2 = getNormalizedSemverVersion(branchName2);
 
-  return Number(versionNumber1) - Number(versionNumber2);
+  return Number(version1) - Number(version2);
 }
