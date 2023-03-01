@@ -15,3 +15,7 @@ jobs:
           script: |
             const script = require('./.github/workflows/mergeback.js')
             await script({github, context, core})
+      - env:
+          GH: ${{ toJson(github) }}
+        run: |
+          echo "$GH"
