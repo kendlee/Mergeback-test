@@ -2,9 +2,9 @@ name: Automatic Merge back
 on:
   push:
     branches:
-      - 'main'
-      - 'mergeback'
-      - 'release/*'
+      - "main"
+      - "mergeback"
+      - "release/*"
 jobs:
   welcome:
     runs-on: ubuntu-latest
@@ -14,4 +14,4 @@ jobs:
         with:
           script: |
             const script = require('./.github/mergeback.js')
-            await script({github, context, core})}
+            await script({github, context, core})
