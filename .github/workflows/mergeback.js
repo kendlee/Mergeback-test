@@ -24,7 +24,7 @@ module.exports = async ({ github, context }) => {
       name,
       releasePrefix: getReleasePrefix(name),
     }))
-    .filter((name) => name.startsWith("release"))
+    .filter((branch) => branch.name.startsWith("release"))
     .sort(sortBranchName);
 
   github.log.info(releaseBranches);
