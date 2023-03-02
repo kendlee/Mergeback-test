@@ -130,7 +130,7 @@ async function createMergeBackPullRequest(
     owner: context.repo.owner,
     repo: context.repo.repo,
     title: `[BOT] Merge back: ${sourceBranch} into ${targetBranch} 🤖`,
-    body: `Automatic merging back ${sourceBranch} into ${targetBranch}! @${context.payload.pusher.name} Please verify that the merge is correct.`,
+    body: `Automatic merging back ${sourceBranch} into ${targetBranch}! @${context.payload.pull_request.user.login} Please verify that the merge is correct.`,
     head: newMergeBranch.data.ref,
     base: targetBranch,
   });
@@ -140,6 +140,6 @@ async function createMergeBackPullRequest(
     owner: context.repo.owner,
     repo: context.repo.repo,
     issue_number: createdPR.data.number,
-    assignees: [context.payload.pusher.name],
+    assignees: [context.payload.pull_request.user.login],
   });
 }
