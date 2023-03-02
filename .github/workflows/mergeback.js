@@ -42,7 +42,7 @@ module.exports = async ({ github, context }) => {
  * @param {string} branchName where release prefix is extracted
  * @returns
  */
-function getReleasePrefix(branchName) {
+function getReleasePrefix(branchName = "") {
   const releasePattern = "release/";
   if (!branchName.startsWith(releasePattern)) {
     return "";
