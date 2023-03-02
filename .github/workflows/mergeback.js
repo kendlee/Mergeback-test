@@ -8,7 +8,7 @@ module.exports = async ({ github, context }) => {
   // }
   const releasePrefix = getReleasePrefix(mergedBranchName);
 
-  github.log.info(
+  console.log(
     `Detected merge from ${mergedBranchName} to ${branchNameActionTrigger}`
   );
 
@@ -27,7 +27,7 @@ module.exports = async ({ github, context }) => {
     .filter((branch) => branch.name.startsWith("release"))
     .sort(sortBranchName);
 
-  github.log.info(releaseBranches);
+  console.log(releaseBranches);
 
   // const otherReleases = releaseBranches.filter((name) => name.startsWith());
 };
