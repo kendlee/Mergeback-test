@@ -1,6 +1,5 @@
 module.exports = async ({ github, context }) => {
   console.log(JSON.stringify(context, null, 2));
-  console.log("PR ref", context.payload.pull_request?.head?.ref ?? "none");
 
   const protectedBranches = await github.rest.repos.listBranches({
     owner: context.repo.owner,
@@ -10,14 +9,14 @@ module.exports = async ({ github, context }) => {
   });
 
   const branchNameActionTrigger = context.ref.replace("refs/heads/", "");
-  const mergedBranch = context.payload?.head?.ref;
+  const mergedBranchName = context.payload.pull_request?.head?.ref;
   const releaseBranches = protectedBranches.data
     .map(({ name }) => name)
     .filter((name) => name.startsWith("release"))
     .sort(sortBranchName);
 
-  console.log(protectedBranches);
-  console.log(mergedBranch, ">", branchNameActionTrigger);
+  console.log(JSON.stringify(protectedBranches, null, 2));
+  console.log(mergedBranchName, ">", branchNameActionTrigger);
   console.log(releaseBranches.map(getNormalizedSemverVersion));
 };
 
