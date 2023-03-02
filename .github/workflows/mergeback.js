@@ -61,9 +61,9 @@ function getNormalizedSemverVersion(string) {
   return versions.map((version) => version.padStart(2, "0")).join("");
 }
 
-function sortBranchName(branchName1, branchName2) {
-  const version1 = getNormalizedSemverVersion(branchName1);
-  const version2 = getNormalizedSemverVersion(branchName2);
+function sortBranchName(branch1, branch2) {
+  const version1 = getNormalizedSemverVersion(branch1.name);
+  const version2 = getNormalizedSemverVersion(branch2.name);
 
   return Number(version1) - Number(version2);
 }
