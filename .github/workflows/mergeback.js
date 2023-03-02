@@ -1,3 +1,5 @@
+const RELEASE_PATTERN = "release/";
+
 module.exports = async ({ github, context }) => {
   const branchNameActionTrigger = context.ref.replace("refs/heads/", "");
   const mergedBranchName = context.payload.pull_request?.head?.ref;
@@ -6,7 +8,6 @@ module.exports = async ({ github, context }) => {
   //   github.log.info("No merge detected");
   //   return;
   // }
-  const releasePrefix = getReleasePrefix(mergedBranchName);
 
   console.log(
     `Detected merge from ${mergedBranchName} to ${branchNameActionTrigger}`
@@ -24,24 +25,85 @@ module.exports = async ({ github, context }) => {
       name,
       releasePrefix: getReleasePrefix(name),
     }))
-    .filter((branch) => branch.name.startsWith("release"))
+    .filter((branch) => branch.name.startsWith(RELEASE_PATTERN))
     .sort(sortBranchName);
 
-  const associatedReleaseBranches = releaseBranches.filter(
-    (branch) => branch.releasePrefix === releasePrefix
+  const newerReleaseBranches = filterNewerReleaseBranches(
+    releaseBranches,
+    mergedBranchName
   );
-  const currentReleaseIndex = associatedReleaseBranches.findIndex(
-    ({ name }) => name === mergedBranchName
-  );
-  associatedReleaseBranches.splice(0, currentReleaseIndex);
 
   const otherReleaseBranches = releaseBranches.filter(
     (branch) => branch.releasePrefix !== releasePrefix
   );
 
-  console.log(associatedReleaseBranches);
+  console.log(newerReleaseBranches);
   console.log(otherReleaseBranches);
+
+  // TODO: change to map > 3rd param will be the targeted branches
+  if (mergedBranchName) {
+    await createMergeBackPullRequest(
+      context,
+      mergedBranchName,
+      otherReleaseBranches[0]
+    );
+  }
 };
+
+async function createMergeBackPullRequest(context, sourceBranch, targetBranch) {
+  const newBranchName = `merge-back-${context.sha.substring(
+    0,
+    7
+  )}/${sourceBranch}-into-${targetBranch}`;
+  console.log(`Creating mergeback: ${newBranchName}`);
+
+  // Create new branch from base branch
+  const newMergeBranch = await github.rest.git.createRef({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    ref: `refs/heads/${newBranchName}`,
+    sha: context.sha,
+  });
+
+  // Create pull request to merge
+  const createdPR = await github.rest.pulls.create({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    title: `[BOT] Merge back: ${sourceBranch} into ${targetBranch} 🤖`,
+    body: `Automatic merging back ${sourceBranch} into ${targetBranch}! @${context.payload.pusher.name} Please verify that the merge is correct.`,
+    head: newMergeBranch.data.ref,
+    base: targetBranch,
+  });
+
+  // Add responsible author as an assignee
+  await github.rest.issues.addAssignees({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    issue_number: createdPR.data.number,
+    assignees: [context.payload.pusher.name],
+  });
+}
+
+/**
+ * Filter release branches that has a similar release prefix and newer than comparison branch
+ *
+ * @param {object[]} releaseBranchesToFilter - array of branch objects queried from git api
+ * @param {string} branchForComparison
+ * @returns
+ */
+function filterNewerReleaseBranches(
+  releaseBranchesToFilter,
+  branchForComparison
+) {
+  const releasePrefix = getReleasePrefix(branchForComparison);
+  const associatedReleaseBranches = releaseBranchesToFilter.filter(
+    (branch) => branch.releasePrefix === releasePrefix
+  );
+  const currentReleaseIndex = associatedReleaseBranches.findIndex(
+    ({ name }) => name === branchForComparison
+  );
+  return associatedReleaseBranches.slice(currentReleaseIndex + 1);
+}
 
 /**
  * Get the release prefix based on the provided branch name:
@@ -54,14 +116,13 @@ module.exports = async ({ github, context }) => {
  * @returns
  */
 function getReleasePrefix(branchName = "") {
-  const releasePattern = "release/";
-  if (!branchName.startsWith(releasePattern)) {
+  if (!branchName.startsWith(RELEASE_PATTERN)) {
     return "";
   }
 
   const semanticVersionStartIndex = branchName.lastIndexOf("-");
   return semanticVersionStartIndex === -1
-    ? releasePattern
+    ? RELEASE_PATTERN
     : branchName.substring(0, semanticVersionStartIndex);
 }
 
