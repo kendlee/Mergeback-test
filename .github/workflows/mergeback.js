@@ -27,9 +27,21 @@ module.exports = async ({ github, context }) => {
     .filter((branch) => branch.name.startsWith("release"))
     .sort(sortBranchName);
 
-  console.log(releaseBranches);
+  const associatedReleaseBranches = releaseBranches.filter(
+    (branch) => branch.releasePrefix === releasePrefix
+  );
+  const currentReleaseIndex = associatedReleaseBranches.findIndex(
+    ({ name }) => name === mergedBranchName
+  );
+  const newerReleaseBranches =
+    associatedReleaseBranches.drop(currentReleaseIndex);
 
-  // const otherReleases = releaseBranches.filter((name) => name.startsWith());
+  const otherReleaseBranches = releaseBranches.filter(
+    (branch) => branch.releasePrefix !== releasePrefix
+  );
+
+  console.log(newerReleaseBranches);
+  console.log(otherReleaseBranches);
 };
 
 /**
