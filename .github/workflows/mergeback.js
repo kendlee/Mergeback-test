@@ -34,7 +34,7 @@ module.exports = async ({ github, context }) => {
   );
 
   const otherReleaseBranches = releaseBranches.filter(
-    (branch) => branch.releasePrefix !== releasePrefix
+    (branch) => branch.releasePrefix !== getReleasePrefix(mergedBranchName)
   );
 
   console.log(newerReleaseBranches);
@@ -49,40 +49,6 @@ module.exports = async ({ github, context }) => {
     );
   }
 };
-
-async function createMergeBackPullRequest(context, sourceBranch, targetBranch) {
-  const newBranchName = `merge-back-${context.sha.substring(
-    0,
-    7
-  )}/${sourceBranch}-into-${targetBranch}`;
-  console.log(`Creating mergeback: ${newBranchName}`);
-
-  // Create new branch from base branch
-  const newMergeBranch = await github.rest.git.createRef({
-    owner: context.repo.owner,
-    repo: context.repo.repo,
-    ref: `refs/heads/${newBranchName}`,
-    sha: context.sha,
-  });
-
-  // Create pull request to merge
-  const createdPR = await github.rest.pulls.create({
-    owner: context.repo.owner,
-    repo: context.repo.repo,
-    title: `[BOT] Merge back: ${sourceBranch} into ${targetBranch} 🤖`,
-    body: `Automatic merging back ${sourceBranch} into ${targetBranch}! @${context.payload.pusher.name} Please verify that the merge is correct.`,
-    head: newMergeBranch.data.ref,
-    base: targetBranch,
-  });
-
-  // Add responsible author as an assignee
-  await github.rest.issues.addAssignees({
-    owner: context.repo.owner,
-    repo: context.repo.repo,
-    issue_number: createdPR.data.number,
-    assignees: [context.payload.pusher.name],
-  });
-}
 
 /**
  * Filter release branches that has a similar release prefix and newer than comparison branch
@@ -138,4 +104,38 @@ function sortBranchName(branch1, branch2) {
   const version2 = getNormalizedSemverVersion(branch2.name);
 
   return Number(version1) - Number(version2);
+}
+
+async function createMergeBackPullRequest(context, sourceBranch, targetBranch) {
+  const newBranchName = `merge-back-${context.sha.substring(
+    0,
+    7
+  )}/${sourceBranch}-into-${targetBranch}`;
+  console.log(`Creating mergeback: ${newBranchName}`);
+
+  // Create new branch from base branch
+  const newMergeBranch = await github.rest.git.createRef({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    ref: `refs/heads/${newBranchName}`,
+    sha: context.sha,
+  });
+
+  // Create pull request to merge
+  const createdPR = await github.rest.pulls.create({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    title: `[BOT] Merge back: ${sourceBranch} into ${targetBranch} 🤖`,
+    body: `Automatic merging back ${sourceBranch} into ${targetBranch}! @${context.payload.pusher.name} Please verify that the merge is correct.`,
+    head: newMergeBranch.data.ref,
+    base: targetBranch,
+  });
+
+  // Add responsible author as an assignee
+  await github.rest.issues.addAssignees({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    issue_number: createdPR.data.number,
+    assignees: [context.payload.pusher.name],
+  });
 }
