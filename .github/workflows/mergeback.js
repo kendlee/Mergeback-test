@@ -44,7 +44,7 @@ module.exports = async ({ github, context }) => {
  */
 function getReleasePrefix(branchName) {
   const releasePattern = "release/";
-  if (!mergedBranchName.startsWith(releasePattern)) {
+  if (!branchName.startsWith(releasePattern)) {
     return "";
   }
 
