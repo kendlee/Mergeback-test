@@ -45,7 +45,7 @@ module.exports = async ({ github, context }) => {
     await createMergeBackPullRequest(
       context,
       mergedBranchName,
-      otherReleaseBranches[0]
+      otherReleaseBranches[0].name
     );
   }
 };
@@ -106,7 +106,11 @@ function sortBranchName(branch1, branch2) {
   return Number(version1) - Number(version2);
 }
 
-async function createMergeBackPullRequest(context, sourceBranch, targetBranch) {
+async function createMergeBackPullRequest(
+  { context, github },
+  sourceBranch,
+  targetBranch
+) {
   const newBranchName = `merge-back-${context.sha.substring(
     0,
     7
