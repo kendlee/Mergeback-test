@@ -33,14 +33,13 @@ module.exports = async ({ github, context }) => {
   const currentReleaseIndex = associatedReleaseBranches.findIndex(
     ({ name }) => name === mergedBranchName
   );
-  const newerReleaseBranches =
-    associatedReleaseBranches.drop(currentReleaseIndex);
+  associatedReleaseBranches.splice(0, currentReleaseIndex);
 
   const otherReleaseBranches = releaseBranches.filter(
     (branch) => branch.releasePrefix !== releasePrefix
   );
 
-  console.log(newerReleaseBranches);
+  console.log(associatedReleaseBranches);
   console.log(otherReleaseBranches);
 };
 
