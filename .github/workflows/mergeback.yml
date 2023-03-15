@@ -31,7 +31,7 @@ jobs:
           # echo ">>>>>>> merged"
           # cat merged-releases.csv
           echo ">>>>>>>3"
-      shell: bash
+        shell: bash
       # - uses: actions/github-script@v6
       #   with:
       #     script: |
