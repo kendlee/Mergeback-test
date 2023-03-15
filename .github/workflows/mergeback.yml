@@ -13,8 +13,13 @@ jobs:
         run: |
           git fetch --all
           git branch -r --merged > merged-releases.csv
-          echo ">>>>>>>"
+          git branch > b.txt
+          echo ">>>>>>>1"
           cat merged-releases.csv
+          echo ">>>>>>>2"
+          cat b.txt
+          echo ">>>>>>>3"
+
         shell: bash
       - uses: actions/github-script@v6
         with:
