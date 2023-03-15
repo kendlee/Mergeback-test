@@ -12,19 +12,25 @@ jobs:
         id: merged-releases
         run: |
           git fetch --all
-          git branch -a --no-merged main > no-merged-releases.csv
-          git branch -a --merged main > merged-releases.csv
-          # git branch -a --merged main > merged-releases.csv
-          # git branch > b.txt
-          echo ">>>>>>> nomerge"
-          cat no-merged-releases.csv
-          echo ">>>>>>> merged"
-          cat merged-releases.csv
-          echo ">>>>>>>3"
-
+          git branch -r --merged | grep origin/release | sed 's/origin\///' > merged-releases.txt
+          cat merged-releases.txt
         shell: bash
-      - uses: actions/github-script@v6
-        with:
-          script: |
-            const script = require('./.github/workflows/mergeback.js')
-            await script({github, context, core})
+      # - name: Get merged releases
+      #   id: merged-releases
+      #   run: |
+      #     git fetch --all
+      #     git branch -a --no-merged main > no-merged-releases.csv
+      #     git branch -a --merged main > merged-releases.csv
+      #     # git branch -a --merged main > merged-releases.csv
+      #     # git branch > b.txt
+      #     echo ">>>>>>> nomerge"
+      #     cat no-merged-releases.csv
+      #     echo ">>>>>>> merged"
+      #     cat merged-releases.csv
+      #     echo ">>>>>>>3"
+      # shell: bash
+      # - uses: actions/github-script@v6
+      #   with:
+      #     script: |
+      #       const script = require('./.github/workflows/mergeback.js')
+      #       await script({github, context, core})
