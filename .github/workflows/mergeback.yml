@@ -12,13 +12,13 @@ jobs:
         id: merged-releases
         run: |
           git fetch --all
-          git branch -a --no-merged > no-merged-releases.csv
-          git branch -a --merged > merged-releases.csv
+          git branch -a --no-merged main > no-merged-releases.csv
+          git branch -a --merged main > merged-releases.csv
           # git branch -a --merged main > merged-releases.csv
           # git branch > b.txt
-          echo ">>>>>>>1"
+          echo ">>>>>>> nomerge"
           cat no-merged-releases.csv
-          echo ">>>>>>>2"
+          echo ">>>>>>> merged"
           cat merged-releases.csv
           echo ">>>>>>>3"
 
