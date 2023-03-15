@@ -11,7 +11,7 @@ jobs:
       - name: Get merged releases
         id: merged-releases
         run: |
-          # git fetch --all
+          git fetch --all
           git branch -a --no-merged > no-merged-releases.csv
           git branch -a --merged > merged-releases.csv
           # git branch -a --merged main > merged-releases.csv
