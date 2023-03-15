@@ -8,30 +8,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Get merged releases
-        id: merged-releases
-        run: |
-          git fetch --all
-          git branch -r --merged > merged-releases.txt
-          echo ">>>>>> pre"
-          cat merged-releases.txt
-          echo ">>>>>> current"
-          git branch --show-current
-        shell: bash
       # - name: Get merged releases
       #   id: merged-releases
       #   run: |
       #     git fetch --all
-      #     git branch -a --no-merged main > no-merged-releases.csv
-      #     git branch -a --merged main > merged-releases.csv
-      #     # git branch -a --merged main > merged-releases.csv
-      #     # git branch > b.txt
-      #     echo ">>>>>>> nomerge"
-      #     cat no-merged-releases.csv
-      #     echo ">>>>>>> merged"
-      #     cat merged-releases.csv
-      #     echo ">>>>>>>3"
-      # shell: bash
+      #     git branch -r --merged > merged-releases.txt
+      #     echo ">>>>>> pre"
+      #     cat merged-releases.txt
+      #     echo ">>>>>> current"
+      #     git branch --show-current
+      #   shell: bash
+      - name: Get merged releases
+        id: merged-releases
+        run: |
+          git fetch --all
+          git branch -a --no-merged main > no-merged-releases.csv
+          # git branch -a --merged main > merged-releases.csv
+          # git branch -a --merged main > merged-releases.csv
+          # git branch > b.txt
+          echo ">>>>>>> nomerge"
+          cat no-merged-releases.csv
+          # echo ">>>>>>> merged"
+          # cat merged-releases.csv
+          echo ">>>>>>>3"
+      shell: bash
       # - uses: actions/github-script@v6
       #   with:
       #     script: |
