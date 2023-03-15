@@ -12,14 +12,15 @@ jobs:
         id: merged-releases
         run: |
           git fetch --all
-          git branch --no-merged > merged-releases.csv
+          git branch --no-merged > no-merged-releases.csv
+          git branch --merged > merged-releases.csv
           # git branch -a --merged main > merged-releases.csv
           # git branch > b.txt
           echo ">>>>>>>1"
-          cat merged-releases.csv
+          cat no-merged-releases.csv
           echo ">>>>>>>2"
-          # cat b.txt
-          # echo ">>>>>>>3"
+          cat merged-releases.csv
+          echo ">>>>>>>3"
 
         shell: bash
       - uses: actions/github-script@v6
