@@ -12,8 +12,8 @@ jobs:
         id: merged-releases
         run: |
           git fetch --all
-          awk
-          # git branch -r --merged | grep origin/release | awk '{sub("origin/","",$0); printf("%s%s",sep,$0); sep=","} END{print ""}' > merged-releases.csv
+          git branch -r --merged | grep origin/release | awk '{sub("origin/","",$0); printf("%s%s",sep,$0); sep=","} END{print ""}' > merged-releases.csv
+          cat merged-releases.csv
         shell: bash
       # - uses: actions/github-script@v6
       #   with:
