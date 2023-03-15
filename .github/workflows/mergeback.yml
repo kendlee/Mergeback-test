@@ -13,7 +13,10 @@ jobs:
         run: |
           git fetch --all
           git branch -r --merged > merged-releases.txt
+          echo ">>>>>> pre"
           cat merged-releases.txt
+          echo ">>>>>> current"
+          git branch --show-current
         shell: bash
       # - name: Get merged releases
       #   id: merged-releases
