@@ -12,7 +12,7 @@ jobs:
         id: merged-releases
         run: |
           git fetch --all
-          git branch -r --merged | grep origin/release | sed 's/origin\///' > merged-releases.txt
+          git branch -r --merged > merged-releases.txt
           cat merged-releases.txt
         shell: bash
       # - name: Get merged releases
