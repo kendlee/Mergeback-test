@@ -12,7 +12,7 @@ jobs:
         id: merged-releases
         run: |
           git fetch --all
-          git branch -r --merged | grep origin/release | awk '{printf "%s%s",sep,$0; sep=","} END{print ""}'
+          git branch -r --merged > merged-releases.csv
           echo ">>>>>>>"
           cat merged-releases.csv
         shell: bash
