@@ -14,9 +14,9 @@ jobs:
           GH: ${{ toJson(github) }}
         run: |
           echo "$GH"
-      - uses: actions/checkout@v2
-      - uses: actions/github-script@v6
-        with:
-          script: |
-            const script = require('./.github/workflows/mergeback.js')
-            await script({github, context, core})
+      # - uses: actions/checkout@v2
+      # - uses: actions/github-script@v6
+      #   with:
+      #     script: |
+      #       const script = require('./.github/workflows/mergeback.js')
+      #       await script({github, context, core})
