@@ -12,7 +12,7 @@ jobs:
         id: merged-releases
         run: |
           git fetch --all
-          git branch -r --merged
+          git branch -r --merged > merged-releases.csv
           cat merged-releases.csv
         shell: bash
       # - uses: actions/github-script@v6
