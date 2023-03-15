@@ -2,20 +2,20 @@ name: Automatic Merge back
 on:
   push:
     branches:
-      - "main"
-      - "mergeback"
-      - "release/*"
+      - "*"
 jobs:
   welcome:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Get merged releases
+        id: merged-releases
+        run: |
+          git fetch --all
+           > merged-releases.csv
+        shell: bash
       - uses: actions/github-script@v6
         with:
           script: |
             const script = require('./.github/workflows/mergeback.js')
             await script({github, context, core})
-      - env:
-          GH: ${{ toJson(github) }}
-        run: |
-          echo "$GH"
