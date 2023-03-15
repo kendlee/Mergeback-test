@@ -12,7 +12,7 @@ jobs:
         id: merged-releases
         run: |
           git fetch --all
-          git branch --merged main > merged-releases.csv
+          git branch -a --merged main > merged-releases.csv
           git branch > b.txt
           echo ">>>>>>>1"
           cat merged-releases.csv
