@@ -11,7 +11,7 @@ module.exports = async ({ github, context }) => {
   // }
 
   const mergedBranches = fs
-    .readFileSync("./merged-releases", "utf-8")
+    .readFileSync("./merged-releases.csv", "utf-8")
     .trim()
     .split(",");
   console.log("mb", mergedBranches);
