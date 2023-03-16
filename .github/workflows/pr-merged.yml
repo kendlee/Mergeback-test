@@ -8,15 +8,19 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          echo The PR was merged
-      - env:
-          GH: ${{ toJson(github) }}
+      - name: Checkout with full history
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: main
+      - name: Get unmerged releases
+        id: merged-releases
         run: |
-          echo "$GH"
-      # - uses: actions/checkout@v2
-      # - uses: actions/github-script@v6
-      #   with:
-      #     script: |
-      #       const script = require('./.github/workflows/mergeback.js')
-      #       await script({github, context, core})
+          git branch -a --no-merged main | grep origin/release | sed 's/remotes\/origin\///' > no-merged-releases.txt
+        shell: bash
+      - name: Create mergeback PRs
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const script = require('./.github/workflows/mergeback.js')
+            await script({github, context, core})
