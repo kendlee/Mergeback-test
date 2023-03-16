@@ -7,31 +7,18 @@ jobs:
   welcome:
     runs-on: ubuntu-latest
     steps:
-      # - uses: actions/checkout@v2
-      - uses: actions/checkout@v3
+      - name: Checkout with full history
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      # - name: Get merged releases
-      #   id: merged-releases
-      #   run: |
-      #     git fetch --all
-      #     git branch -r --merged > merged-releases.txt
-      #     echo ">>>>>> pre"
-      #     cat merged-releases.txt
-      #     echo ">>>>>> current"
-      #     git branch --show-current
-      #   shell: bash
-      # - name: Install Git
-      #   run: sudo apt-get update && sudo apt-get install -y git
-      - name: Get merged releases
+      - name: Get unmerged releases
         id: merged-releases
         run: |
-          git branch -a --no-merged main | grep origin/release | sed 's/remotes\/origin\///' > no-merged-releases.csv
-          echo ">>>>>>> nomerge"
-          cat no-merged-releases.csv
+          git branch -a --no-merged main | grep origin/release | sed 's/remotes\/origin\///' > no-merged-releases.txt
         shell: bash
-      # - uses: actions/github-script@v6
-      #   with:
-      #     script: |
-      #       const script = require('./.github/workflows/mergeback.js')
-      #       await script({github, context, core})
+      - name: Create mergeback PRs
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const script = require('./.github/workflows/mergeback.js')
+            await script({github, context, core})
