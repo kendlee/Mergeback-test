@@ -53,11 +53,11 @@ module.exports = async ({ github, context }) => {
 
   // // TODO: change to map > 3rd param will be the targeted branches
   if (mergedBranchName) {
-    const mergeActions = unmergedReleases.map(() =>
+    const mergeActions = unmergedReleases.map((unmergedRelease) =>
       createMergeBackPullRequest(
         { github, context },
         mergedBranchName,
-        unmergedReleases[0]
+        unmergedRelease
       )
     );
     await Promise.all(mergeActions);
@@ -144,8 +144,8 @@ async function createMergeBackPullRequest(
   const createdPR = await github.rest.pulls.create({
     owner: context.repo.owner,
     repo: context.repo.repo,
-    title: `[BOT] Merge back: ${sourceBranch} into ${targetBranch} 🤖`,
-    body: `Automatic merging back ${sourceBranch} into ${targetBranch}! @${context.payload.pull_request.user.login} Please verify that the merge is correct.`,
+    title: `[BOT] Merge back: ${sourceBranch}/main into ${targetBranch} 🤖`,
+    body: `Automatic merging back ${sourceBranch}/main into ${targetBranch}! @${context.payload.pull_request.user.login} Please verify that the merge is correct.`,
     head: newMergeBranch.data.ref,
     base: targetBranch,
   });
