@@ -8,14 +8,19 @@ module.exports = async ({ github, context }) => {
   const branchNameActionTrigger = context.ref.replace("refs/heads/", "");
   const mergedBranchName = context.payload.pull_request?.head?.ref;
 
-  // if (!mergedBranchName) {
-  //   github.log.info("No merge detected");
-  //   return;
-  // }
-
   console.log(
     `Detected merge from ${mergedBranchName} to ${branchNameActionTrigger}`
   );
+
+  if (!mergedBranchName) {
+    console.log("No merge detected");
+    return;
+  }
+
+  if (branchNameActionTrigger !== "main") {
+    console.log("Skipping non-main merge event", branchNameActionTrigger);
+    return;
+  }
 
   const unmergedReleases = fs
     .readFileSync("no-merged-releases.txt", "utf-8")
