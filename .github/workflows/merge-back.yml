@@ -1,3 +1,4 @@
+name: Automatic Merge Back
 on:
   pull_request:
     types:
