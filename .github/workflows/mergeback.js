@@ -13,12 +13,6 @@ module.exports = async ({ github, context }) => {
   //   return;
   // }
 
-  const mergedBranches = fs
-    .readFileSync("./csv.csv", "utf-8")
-    .split(",")
-    .map((b) => b.trim());
-  console.log("mb", mergedBranches);
-
   console.log(
     `Detected merge from ${mergedBranchName} to ${branchNameActionTrigger}`
   );
