@@ -1,16 +1,21 @@
-name: Automatic Merge back
+name: Automatic Merge Back
 on:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
-      - "*"
+      - "main"
+
 jobs:
-  welcome:
+  mergeback:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout with full history
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          ref: main
       - name: Get unmerged releases
         id: merged-releases
         run: |
