@@ -53,11 +53,15 @@ module.exports = async ({ github, context }) => {
 
   // // TODO: change to map > 3rd param will be the targeted branches
   if (mergedBranchName) {
-    await createMergeBackPullRequest(
-      { github, context },
-      mergedBranchName,
-      unmergedReleases[0]
+    const mergeActions = unmergedReleases.map(() =>
+      createMergeBackPullRequest(
+        { github, context },
+        mergedBranchName,
+        unmergedReleases[0]
+      )
     );
+    await Promise.all(mergeActions);
+    console.log("Finished creating pull requests");
   }
 };
 
