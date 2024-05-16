@@ -8,9 +8,12 @@ module.exports = async ({ github, context }) => {
   const branchNameActionTrigger = context.ref.replace("refs/heads/", "");
   const mergedBranchName = context.payload.pull_request?.head?.ref;
 
-  console.log(
-    `Detected merge from ${mergedBranchName} to ${branchNameActionTrigger}`
-  );
+  const detectedAction = mergedBranchName
+    ? `Detected merge from ${mergedBranchName} to ${branchNameActionTrigger}`
+    : "Detected push to main";
+
+  console.log(detectedAction);
+  console.log(JSON.stringify(context.payload, null, 2));
 
   if (!mergedBranchName) {
     console.log("No merge detected");
