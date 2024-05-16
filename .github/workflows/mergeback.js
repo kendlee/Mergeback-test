@@ -7,17 +7,9 @@ const removeLeadingTrailingSpaces = (a) => a.trim();
 const ciUser = "";
 
 module.exports = async ({ github, context }) => {
-  const branchNameActionTrigger = context.ref.replace("refs/heads/", "");
-  const action = context.payload.pull_request ? "merge" : "push";
-  const branchToMerge =
-    action === "merge"
-      ? context.payload.pull_request?.base?.ref
-      : branchNameActionTrigger;
+  const branchToMerge = context.ref.replace("refs/heads/", "");
 
-  const detectedAction =
-    action === "merge"
-      ? `Detected merge from ${branchToMerge} to ${branchNameActionTrigger}`
-      : `Detected push to ${branchNameActionTrigger}`;
+  const detectedAction = `Detected push to ${branchNameActionTrigger}`;
 
   console.log(detectedAction);
 
