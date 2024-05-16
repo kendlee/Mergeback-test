@@ -21,7 +21,9 @@ jobs:
         shell: bash
       - name: Create mergeback PRs
         uses: actions/github-script@v6
+        env:
+          CI_USER: kendlee
         with:
           script: |
             const script = require('./.github/workflows/mergeback.js')
-            await script({github, context, core})
+            await script({github, context, core}, process.env)

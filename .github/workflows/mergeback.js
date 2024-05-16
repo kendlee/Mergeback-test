@@ -4,10 +4,9 @@ const fs = require("fs");
 const falsyEntries = (a) => !!a;
 const removeLeadingTrailingSpaces = (a) => a.trim();
 
-const ciUser = "kendlee";
-
-module.exports = async ({ github, context }) => {
+module.exports = async ({ github, context }, env = {}) => {
   const branchToMerge = context.ref.replace("refs/heads/", "");
+  const ciUser = env.CI_USER ?? "";
 
   const detectedAction = `Detected push to ${branchToMerge}`;
 
