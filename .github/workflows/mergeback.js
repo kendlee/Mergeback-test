@@ -4,7 +4,7 @@ const fs = require("fs");
 const falsyEntries = (a) => !!a;
 const removeLeadingTrailingSpaces = (a) => a.trim();
 
-const ciUser = "";
+const ciUser = "kendlee";
 
 module.exports = async ({ github, context }) => {
   const branchToMerge = context.ref.replace("refs/heads/", "");
