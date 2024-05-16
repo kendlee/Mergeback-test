@@ -1,0 +1,29 @@
+name: Automatic Merge Back
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - "main"
+
+jobs:
+  mergeback:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout with full history
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: main
+      - name: Get unmerged releases
+        id: merged-releases
+        run: |
+          git branch -a --no-merged main | grep origin/release | sed 's/remotes\/origin\///' > no-merged-releases.txt
+        shell: bash
+      - name: Create mergeback PRs
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const script = require('./.github/workflows/mergeback.js')
+            await script({github, context, core})
