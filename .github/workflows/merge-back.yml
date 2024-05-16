@@ -6,7 +6,6 @@ on:
 
 jobs:
   mergeback:
-    if: github.event.pull_request.merged == true || github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout with full history
