@@ -34,10 +34,11 @@ async function createMergeBackPullRequest(
   targetBranch
 ) {
   try {
-    const newBranchName = `merge-back-${context.sha.substring(
+    const sourceBranchWithSha = `${context.sha.substring(
       0,
       7
-    )}/${sourceBranch}-into-${targetBranch}`;
+    )}/${sourceBranch}`;
+    const newBranchName = `merge-back-${sourceBranchWithSha}-into-${targetBranch}`;
     console.log(`Creating mergeback: ${newBranchName}`);
 
     // Create new branch from base branch
@@ -59,8 +60,8 @@ async function createMergeBackPullRequest(
     const createdPR = await github.rest.pulls.create({
       owner: context.repo.owner,
       repo: context.repo.repo,
-      title: `[BOT] Merge back: ${sourceBranch}/main into ${targetBranch} 🤖`,
-      body: `Automatic merging back ${sourceBranch}/main into ${targetBranch}! ${assignees
+      title: `[BOT] Merge back: ${sourceBranchWithSha} into ${targetBranch} 🤖`,
+      body: `Automatic merging back ${sourceBranchWithSha} into ${targetBranch}! ${assignees
         .map((assignee) => `@${assignee}`)
         .join(" ")} Please verify that the merge is correct.`,
       head: newMergeBranch.data.ref,
@@ -76,7 +77,7 @@ async function createMergeBackPullRequest(
     });
   } catch (error) {
     console.log(
-      `Pull request not created ${sourceBranch}/main into ${targetBranch}`,
+      `Pull request not created ${sourceBranchWithSha} into ${targetBranch}`,
       error
     );
   }
