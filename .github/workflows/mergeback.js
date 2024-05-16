@@ -4,15 +4,16 @@ const fs = require("fs");
 const falsyEntries = (a) => !!a;
 const removeLeadingTrailingSpaces = (a) => a.trim();
 
+const ciUser = "";
+
 module.exports = async ({ github, context }) => {
-  const branchNameActionTrigger = context.ref.replace("refs/heads/", "");
-  const mergedBranchName = context.payload.pull_request?.head?.ref;
+  const branchToMerge = context.ref.replace("refs/heads/", "");
 
-  console.log(
-    `Detected merge from ${mergedBranchName} to ${branchNameActionTrigger}`
-  );
+  const detectedAction = `Detected push to ${branchToMerge}`;
 
-  if (!mergedBranchName) {
+  console.log(detectedAction);
+
+  if (!branchToMerge) {
     console.log("No merge detected");
     return;
   }
@@ -23,11 +24,11 @@ module.exports = async ({ github, context }) => {
     .filter(falsyEntries)
     .map(removeLeadingTrailingSpaces);
 
-  if (mergedBranchName) {
+  if (branchToMerge) {
     const mergeActions = unmergedReleases.map((unmergedRelease) =>
       createMergeBackPullRequest(
         { github, context },
-        mergedBranchName,
+        branchToMerge,
         unmergedRelease
       )
     );
@@ -56,12 +57,21 @@ async function createMergeBackPullRequest(
       sha: context.sha,
     });
 
+    const user = context.payload.sender.login;
+    const assignees = [];
+    // Exclude CI account from tagging
+    if (user !== ciUser) {
+      assignees.push(user);
+    }
+
     // Create pull request to merge
     const createdPR = await github.rest.pulls.create({
       owner: context.repo.owner,
       repo: context.repo.repo,
       title: `[BOT] Merge back: ${sourceBranch}/main into ${targetBranch} 🤖`,
-      body: `Automatic merging back ${sourceBranch}/main into ${targetBranch}! @${context.payload.pull_request.user.login} Please verify that the merge is correct.`,
+      body: `Automatic merging back ${sourceBranch}/main into ${targetBranch}! ${assignees
+        .map((assignee) => `@${assignee}`)
+        .join(" ")} Please verify that the merge is correct.`,
       head: newMergeBranch.data.ref,
       base: targetBranch,
     });
@@ -71,7 +81,7 @@ async function createMergeBackPullRequest(
       owner: context.repo.owner,
       repo: context.repo.repo,
       issue_number: createdPR.data.number,
-      assignees: [context.payload.pull_request.user.login],
+      assignees,
     });
   } catch (error) {
     console.log(
