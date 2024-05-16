@@ -6,16 +6,20 @@ const removeLeadingTrailingSpaces = (a) => a.trim();
 
 module.exports = async ({ github, context }) => {
   const branchNameActionTrigger = context.ref.replace("refs/heads/", "");
-  const mergedBranchName = context.payload.pull_request?.head?.ref;
+  const action = context.payload.pull_request ? "merge" : "push";
+  const branchToMerge =
+    action === "merge"
+      ? context.payload.pull_request?.base?.ref
+      : branchNameActionTrigger;
 
-  const detectedAction = mergedBranchName
-    ? `Detected merge from ${mergedBranchName} to ${branchNameActionTrigger}`
-    : "Detected push to main";
+  const detectedAction =
+    action === "merge"
+      ? `Detected merge from ${branchToMerge} to ${branchNameActionTrigger}`
+      : `Detected push to ${branchNameActionTrigger}`;
 
   console.log(detectedAction);
-  console.log(JSON.stringify(context.payload, null, 2));
 
-  if (!mergedBranchName) {
+  if (!branchToMerge) {
     console.log("No merge detected");
     return;
   }
@@ -26,11 +30,11 @@ module.exports = async ({ github, context }) => {
     .filter(falsyEntries)
     .map(removeLeadingTrailingSpaces);
 
-  if (mergedBranchName) {
+  if (branchToMerge) {
     const mergeActions = unmergedReleases.map((unmergedRelease) =>
       createMergeBackPullRequest(
         { github, context },
-        mergedBranchName,
+        branchToMerge,
         unmergedRelease
       )
     );
