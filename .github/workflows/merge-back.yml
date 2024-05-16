@@ -19,7 +19,7 @@ jobs:
       - name: Get unmerged releases
         id: merged-releases
         run: |
-          git branch -a --no-merged main | grep origin/release | sed 's/remotes\/origin\///' > no-merged-releases.txt
+          git branch -a --no-merged main | grep origin/release | sed 's/remotes\/origin\///' > no-merged-releases.txt || true
         shell: bash
       - name: Create mergeback PRs
         uses: actions/github-script@v6
