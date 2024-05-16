@@ -9,3 +9,4 @@
 - hotfix h
 - direct commit a
 - direct commit b
+- direct commit c
