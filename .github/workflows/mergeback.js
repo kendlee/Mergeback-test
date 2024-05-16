@@ -1,4 +1,3 @@
-const RELEASE_PATTERN = "release/";
 const fs = require("fs");
 
 const falsyEntries = (a) => !!a;
@@ -12,28 +11,21 @@ module.exports = async ({ github, context }, env = {}) => {
 
   console.log(`Detected push to ${branchToMerge}`);
 
-  if (!branchToMerge) {
-    console.log("No merge detected");
-    return;
-  }
-
   const unmergedReleases = fs
     .readFileSync("no-merged-releases.txt", "utf-8")
     .split("\n")
     .filter(falsyEntries)
     .map(removeLeadingTrailingSpaces);
 
-  if (branchToMerge) {
-    const mergeActions = unmergedReleases.map((unmergedRelease) =>
-      createMergeBackPullRequest(
-        { github, context },
-        branchToMerge,
-        unmergedRelease
-      )
-    );
-    await Promise.all(mergeActions);
-    console.log("Finished creating pull requests");
-  }
+  const mergeActions = unmergedReleases.map((unmergedRelease) =>
+    createMergeBackPullRequest(
+      { github, context },
+      branchToMerge,
+      unmergedRelease
+    )
+  );
+  await Promise.all(mergeActions);
+  console.log("Finished creating pull requests");
 };
 
 async function createMergeBackPullRequest(
