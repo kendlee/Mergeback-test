@@ -1,4 +1,4 @@
-# Mergeback-test 3.0.4
+# Mergeback-test 3.0.5
 
 hotfix a
 hotfix b
