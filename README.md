@@ -8,3 +8,4 @@ hotfix f
 hotfix g
 hotfix h
 direct commit a
+direct commit b
