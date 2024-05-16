@@ -9,7 +9,7 @@ const ciUser = "";
 module.exports = async ({ github, context }) => {
   const branchToMerge = context.ref.replace("refs/heads/", "");
 
-  const detectedAction = `Detected push to ${branchNameActionTrigger}`;
+  const detectedAction = `Detected push to ${branchToMerge}`;
 
   console.log(detectedAction);
 
