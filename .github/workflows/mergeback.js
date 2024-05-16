@@ -10,9 +10,7 @@ module.exports = async ({ github, context }, env = {}) => {
   const branchToMerge = context.ref.replace("refs/heads/", "");
   ciUser = env.CI_USER ?? "";
 
-  const detectedAction = `Detected push to ${branchToMerge}`;
-
-  console.log(detectedAction);
+  console.log(`Detected push to ${branchToMerge}`);
 
   if (!branchToMerge) {
     console.log("No merge detected");
