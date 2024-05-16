@@ -4,6 +4,8 @@ const fs = require("fs");
 const falsyEntries = (a) => !!a;
 const removeLeadingTrailingSpaces = (a) => a.trim();
 
+const ciUser = "";
+
 module.exports = async ({ github, context }) => {
   const branchNameActionTrigger = context.ref.replace("refs/heads/", "");
   const action = context.payload.pull_request ? "merge" : "push";
@@ -63,12 +65,21 @@ async function createMergeBackPullRequest(
       sha: context.sha,
     });
 
+    const user = context.payload.sender.login;
+    const assignees = [];
+    // Exclude CI account from tagging
+    if (user !== ciUser) {
+      assignees.push(user);
+    }
+
     // Create pull request to merge
     const createdPR = await github.rest.pulls.create({
       owner: context.repo.owner,
       repo: context.repo.repo,
       title: `[BOT] Merge back: ${sourceBranch}/main into ${targetBranch} 🤖`,
-      body: `Automatic merging back ${sourceBranch}/main into ${targetBranch}! @${context.payload.pull_request.user.login} Please verify that the merge is correct.`,
+      body: `Automatic merging back ${sourceBranch}/main into ${targetBranch}! ${assignees
+        .map((assignee) => `@${assignee}`)
+        .join(" ")} Please verify that the merge is correct.`,
       head: newMergeBranch.data.ref,
       base: targetBranch,
     });
@@ -78,7 +89,7 @@ async function createMergeBackPullRequest(
       owner: context.repo.owner,
       repo: context.repo.repo,
       issue_number: createdPR.data.number,
-      assignees: [context.payload.pull_request.user.login],
+      assignees,
     });
   } catch (error) {
     console.log(
