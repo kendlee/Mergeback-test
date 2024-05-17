@@ -10,3 +10,4 @@
 - direct commit a
 - direct commit b
 - direct commit c
+- automated package release
